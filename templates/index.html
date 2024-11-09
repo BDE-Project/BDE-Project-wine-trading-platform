@@ -1,57 +1,139 @@
 {% extends "base.html" %}
 {% block content %}
-<h2 class="mb-4">Dashboard</h2>
+<h2 class="mb-4">Dashboard Overview</h2>
 
 <div class="row">
+    <!-- Total Restaurants -->
     <div class="col-md-3">
         <div class="card bg-primary text-white mb-4">
-            <div class="card-body">Total Restaurants</div>
-            <div class="card-footer d-flex align-items-center justify-content-between">
-                <h5>{{ total_restaurants }}</h5>
+            <div class="card-body">
+                <h5>Total Restaurants</h5>
+                <p class="display-4">{{ dashboard_data.total_restaurants }}</p>
             </div>
         </div>
     </div>
+
+    <!-- Total Wines -->
     <div class="col-md-3">
         <div class="card bg-success text-white mb-4">
-            <div class="card-body">Available Wines</div>
-            <div class="card-footer d-flex align-items-center justify-content-between">
-                <h5>{{ total_wines }}</h5>
+            <div class="card-body">
+                <h5>Total Available Wines</h5>
+                <p class="display-4">{{ dashboard_data.total_wines }}</p>
             </div>
         </div>
     </div>
+
+    <!-- Average Wine Price -->
+    <div class="col-md-3">
+        <div class="card bg-info text-white mb-4">
+            <div class="card-body">
+                <h5>Average Wine Price</h5>
+                <p class="display-4">${{ dashboard_data.avg_wine_price }}</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Average Tasting Score -->
     <div class="col-md-3">
         <div class="card bg-warning text-white mb-4">
-            <div class="card-body">Upcoming Auctions</div>
-            <div class="card-footer d-flex align-items-center justify-content-between">
-                <h5>{{ upcoming_auctions }}</h5>
-            </div>
-        </div>
-    </div>
-    <div class="col-md-3">
-        <div class="card bg-danger text-white mb-4">
-            <div class="card-body">Logistics Alerts</div>
-            <div class="card-footer d-flex align-items-center justify-content-between">
-                <h5>{{ logistics_alerts }}</h5>
+            <div class="card-body">
+                <h5>Average Tasting Score</h5>
+                <p class="display-4">{{ dashboard_data.avg_tasting_score }}</p>
             </div>
         </div>
     </div>
 </div>
 
 <div class="row">
+    <!-- Popular Wine Types Pie Chart -->
     <div class="col-md-6">
-        <canvas id="wineDemandChart"></canvas>
+        <div class="card mb-4">
+            <div class="card-header">Popular Wine Types</div>
+            <div class="card-body">
+                <canvas id="wineTypeChart"></canvas>
+            </div>
+        </div>
     </div>
+
+    <!-- Top Suppliers List -->
     <div class="col-md-6">
-        <canvas id="supplyDemandChart"></canvas>
+        <div class="card mb-4">
+            <div class="card-header">Top Wine Suppliers</div>
+            <div class="card-body">
+                <ul class="list-group">
+                    {% for supplier, count in dashboard_data.top_suppliers.items() %}
+                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                        {{ supplier }}
+                        <span class="badge badge-primary badge-pill">{{ count }}</span>
+                    </li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
     </div>
 </div>
 
-<script>
-    // Sample data for charts
-    const demandData = [20, 30, 40, 50, 60];
-    const supplyData = [15, 25, 35, 45, 55];
+<div class="row">
+    <!-- Upcoming Auctions -->
+    <div class="col-md-6">
+        <div class="card bg-light mb-4">
+            <div class="card-header">Upcoming Auctions</div>
+            <div class="card-body">
+                <p class="lead">{{ dashboard_data.upcoming_auctions }} auctions are scheduled.</p>
+            </div>
+        </div>
+    </div>
 
-    createChart('wineDemandChart', 'Wine Demand', demandData);
-    createChart('supplyDemandChart', 'Supply vs Demand', supplyData);
+    <!-- Logistics Alerts -->
+    <div class="col-md-6">
+        <div class="card bg-light mb-4">
+            <div class="card-header">Logistics Alerts</div>
+            <div class="card-body">
+                <ul class="list-unstyled">
+                    {% for alert in dashboard_data.logistics_alerts %}
+                    <li>{{ alert.route }}: <strong>{{ alert.status }}</strong></li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Pass data as a JSON object in a global variable -->
+<script>
+    // Create a global JS variable that contains the data
+    window.dashboardData = {
+        popularWineTypes: {
+            labels: JSON.parse('{{ dashboard_data.popular_wine_types.keys() | list | tojson | safe }}'),
+            data: JSON.parse('{{ dashboard_data.popular_wine_types.values() | list | tojson | safe }}')
+        }
+    };
 </script>
+
+
+<!-- Add Chart.js for the pie chart -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    // Render Popular Wine Types Pie Chart using the global data
+    const wineTypeChartCtx = document.getElementById('wineTypeChart').getContext('2d');
+    const wineTypeChart = new Chart(wineTypeChartCtx, {
+        type: 'pie',
+        data: {
+            labels: window.dashboardData.popularWineTypes.labels,
+            datasets: [{
+                data: window.dashboardData.popularWineTypes.data,
+                backgroundColor: ['#ff6384', '#36a2eb', '#cc65fe', '#ffce56', '#ff9f40'],
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                legend: {
+                    position: 'top'
+                }
+            }
+        }
+    });
+</script>
+
 {% endblock %}
