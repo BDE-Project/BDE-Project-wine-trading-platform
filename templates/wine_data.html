@@ -63,6 +63,16 @@
         {% endfor %}
     </tbody>
 </table>
+<!-- Loop through wine data -->
+{% for wine in wines %}
+    <div class="wine-card">
+        <img src="{{ wine['Wine Image'] }}" alt="{{ wine['Wine Name'] }}" />
+        <h3>{{ wine['Wine Name'] }}</h3>
+        <p>Type: {{ wine['Wine Type'] }}</p>
+        <p>Price: ${{ wine['Wine Price'] }}</p>
+        <p>Score: {{ wine['Tasting Score'] }}</p>
+    </div>
+{% endfor %}
 
 <script>
 $(document).ready(function() {
