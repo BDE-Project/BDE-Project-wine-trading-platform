@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Logistics Information</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+</head>
+<body>
+    <div class="container">
+        <h1>Logistics Information</h1>
+
+        <!-- Flight Details -->
+        <section>
+            <h2>Best Flight</h2>
+            <table>
+                <tr>
+                    <th>Price</th>
+                    <td>{{ flights[0]['price']['total'] }}</td>
+                </tr>
+                <tr>
+                    <th>Duration</th>
+                    <td>{{ flights[0]['itineraries'][0]['duration'] }}</td>
+                </tr>
+                <tr>
+                    <th>Departure Time</th>
+                    <td>{{ flights[0]['itineraries'][0]['segments'][0]['departure']['at'] | format_date }}</td>
+                </tr>
+                <tr>
+                    <th>Arrival Time</th>
+                    <td>{{ flights[0]['itineraries'][0]['segments'][-1]['arrival']['at'] | format_date }}</td>
+                </tr>
+                <tr>
+                    <th>Weather Time</th>
+                    <td>{{ weather['dt'] | format_date }}</td> <!-- Assuming 'dt' is a string that needs formatting -->
+                </tr>
+                    
+                <tr>
+                    <th>Airline</th>
+                    <td>{{ flights[0]['itineraries'][0]['segments'][0]['carrierCode'] }}</td>
+                </tr>
+                <tr>
+                    <th>Stops</th>
+                    <td>{{ flights[0]['itineraries'][0]['segments']|length - 1 }}</td>
+                </tr>
+                <tr>
+                    <th>Cabin Class</th>
+                    <td>{{ flights[0]['travelerPricings'][0]['fareDetailsBySegment'][0]['cabin'] }}</td>
+                </tr>
+            </table>
+        </section>
+
+        <!-- Weather at Arrival -->
+        <section>
+            <h2>Weather at Arrival</h2>
+            <table>
+                <tr>
+                    <th>Time</th>
+                    <td>{{ weather['dt'] | date("Y-m-d H:i:s") }}</td>
+                </tr>
+                <tr>
+                    <th>Temperature</th>
+                    <td>{{ weather['main']['temp'] }} °C</td>
+                </tr>
+                <tr>
+                    <th>Weather</th>
+                    <td>{{ weather['weather'][0]['description'] }}</td>
+                </tr>
+                <tr>
+                    <th>Humidity</th>
+                    <td>{{ weather['main']['humidity'] }}%</td>
+                </tr>
+                <tr>
+                    <th>Wind Speed</th>
+                    <td>{{ weather['wind']['speed'] }} m/s</td>
+                </tr>
+            </table>
+        </section>
+
+        <!-- Traffic Details -->
+        <section>
+            <h2>Traffic Details</h2>
+            <table>
+                <tr>
+                    <th>Start Point</th>
+                    <td>{{ traffic['routes'][0]['sections'][0]['startPoint']['latitude'] }}, {{ traffic['routes'][0]['sections'][0]['startPoint']['longitude'] }}</td>
+                </tr>
+                <tr>
+                    <th>End Point</th>
+                    <td>{{ traffic['routes'][0]['sections'][0]['endPoint']['latitude'] }}, {{ traffic['routes'][0]['sections'][0]['endPoint']['longitude'] }}</td>
+                </tr>
+                <tr>
+                    <th>Distance (meters)</th>
+                    <td>{{ traffic['routes'][0]['sections'][0]['summary']['lengthInMeters'] }}</td>
+                </tr>
+                <tr>
+                    <th>Travel Time (seconds)</th>
+                    <td>{{ traffic['routes'][0]['sections'][0]['summary']['travelTimeInSeconds'] }}</td>
+                </tr>
+                <tr>
+                    <th>Traffic Delay (seconds)</th>
+                    <td>{{ traffic['routes'][0]['sections'][0]['summary']['trafficDelayInSeconds'] }}</td>
+                </tr>
+                <tr>
+                    <th>Traffic Level</th>
+                    <td>{{ traffic['routes'][0]['sections'][0]['trafficLevel'] }}</td>
+                </tr>
+            </table>
+        </section>
+    </div>
+</body>
+</html>

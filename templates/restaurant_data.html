@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+{% block content %}
+<h2 class="mb-4">Restaurant Management</h2>
+
+<table id="restaurantTable" class="table table-striped">
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>Location</th>
+            <th>Opening Hours</th>
+            <th>Wine Type</th>
+            <th>Supplier</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for restaurant in restaurants %}
+        <tr>
+            <td>{{ restaurant['Restaurant Name'] }}</td>
+            <td>{{ restaurant['Location'] }}</td>
+            <td>{{ restaurant['Opening Hours'] }}</td>
+            <td>{{ restaurant['Wine Type'] }}</td>
+            <td>{{ restaurant['Supplier'] }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+<script>
+$(document).ready(function() {
+    $('#restaurantTable').DataTable();
+});
+</script>
+{% endblock %}
