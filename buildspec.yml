@@ -1,0 +1,17 @@
+version: 1.0
+frontend:
+  phases:
+    preBuild:
+      commands:
+        - python -m pip install --upgrade pip
+        - pip install -r requirements.txt
+    build:
+      commands:
+        - echo "Build completed"
+  artifacts:
+    baseDirectory: /
+    files:
+      - "**/*"
+  cache:
+    paths:
+      - "node_modules/**/*"
