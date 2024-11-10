@@ -1,17 +1,25 @@
 version: 1.0
-frontend:
-  phases:
-    preBuild:
-      commands:
-        - python -m pip install --upgrade pip
-        - pip install -r requirements.txt
-    build:
-      commands:
-        - echo "Build completed"
-  artifacts:
-    baseDirectory: /
-    files:
-      - "**/*"
-  cache:
-    paths:
-      - "node_modules/**/*"
+phases:
+  preBuild:
+    commands:
+      - python -m pip install --upgrade pip
+      - pip install -r requirements.txt
+      # Retrieve API keys from Parameter Store
+      - GOOGLE_API_KEY=$(aws ssm get-parameter --name "/amplify/GOOGLE_API_KEY" --with-decryption --query "Parameter.Value" --output text)
+      - OPENWEATHERMAP_API_KEY=$(aws ssm get-parameter --name "/amplify/OPENWEATHERMAP_API_KEY" --with-decryption --query "Parameter.Value" --output text)
+      - TOMTOM_API_KEY=$(aws ssm get-parameter --name "/amplify/TOMTOM_API_KEY" --with-decryption --query "Parameter.Value" --output text)
+      - AMADEUS_CLIENT_ID=$(aws ssm get-parameter --name "/amplify/AMADEUS_CLIENT_ID" --with-decryption --query "Parameter.Value" --output text)
+      - AMADEUS_CLIENT_SECRET=$(aws ssm get-parameter --name "/amplify/AMADEUS_CLIENT_SECRET" --with-decryption --query "Parameter.Value" --output text)
+  build:
+    commands:
+      - echo "Build completed"
+
+artifacts:
+  baseDirectory: /
+  files:
+    - "**/*"
+
+cache:
+  paths:
+    - "node_modules/**/*"
+    - "python/**/*"
