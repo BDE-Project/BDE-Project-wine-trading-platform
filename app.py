@@ -200,4 +200,4 @@ def logistics():
         return render_template('logistics.html', error="Failed to fetch flight data.")
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(host='0.0.0.0', port=8080)
